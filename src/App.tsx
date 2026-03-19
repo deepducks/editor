@@ -9,8 +9,20 @@ import { examples } from './examples';
 
 const DEFAULT_YAML = examples[0].yaml;
 
+function getInitialYaml(): string {
+  const hash = window.location.hash;
+  if (hash.startsWith('#code=')) {
+    try {
+      return atob(decodeURIComponent(hash.slice(6)));
+    } catch {
+      // fall through to default
+    }
+  }
+  return DEFAULT_YAML;
+}
+
 export default function App() {
-  const workflow = useWorkflowProvider(DEFAULT_YAML);
+  const workflow = useWorkflowProvider(getInitialYaml());
   const [splitRatio, setSplitRatio] = useState(50);
   const isDragging = useRef(false);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -43,6 +55,17 @@ export default function App() {
     };
   }, []);
 
+  // Listen for postMessage from parent (iframe embedding)
+  useEffect(() => {
+    const handleMessage = (e: MessageEvent) => {
+      if (e.data?.type === 'set-yaml' && typeof e.data.yaml === 'string') {
+        workflow.setYamlContent(e.data.yaml);
+      }
+    };
+    window.addEventListener('message', handleMessage);
+    return () => window.removeEventListener('message', handleMessage);
+  }, [workflow.setYamlContent]);
+
   // Ctrl/Cmd+S to save
   useEffect(() => {
     const handler = (e: KeyboardEvent) => {
@@ -53,7 +76,10 @@ export default function App() {
         const a = document.createElement('a');
         a.href = url;
         a.download = 'workflow.flow.yaml';
+        a.style.display = 'none';
+        document.body.appendChild(a);
         a.click();
+        document.body.removeChild(a);
         URL.revokeObjectURL(url);
       }
     };
