@@ -8,7 +8,7 @@ Architecture: Split-view web app — YAML editor (right) + Mermaid diagram (left
 
 ## Product Summary
 
-A browser-based visual editor for duckflux workflow files (`.flow.yaml`). The user edits YAML in a Monaco editor with live linting (JSON Schema + semantic validation), and sees a Mermaid flowchart that updates in real-time. Clicking any node in the diagram opens a modal with full details for that construct. The editor is standalone (no runner dependency) and can be hosted as a static site.
+A browser-based visual editor for duckflux workflow files (`.duck.yaml`). The user edits YAML in a Monaco editor with live linting (JSON Schema + semantic validation), and sees a Mermaid flowchart that updates in real-time. Clicking any node in the diagram opens a modal with full details for that construct. The editor is standalone (no runner dependency) and can be hosted as a static site.
 
 ---
 
@@ -96,7 +96,7 @@ duckflux-editor/
 │   │   └── node-metadata.ts       # Extract detail metadata per node for modal display
 │   │
 │   ├── schema/
-│   │   └── duckflux.schema.json   # Embedded copy of the duckflux JSON Schema (v0.3)
+│   │   └── duckflux.schema.json   # Embedded copy of the duckflux JSON Schema (v0.7)
 │   │
 │   ├── types/
 │   │   └── workflow.ts            # TypeScript types mirroring duckflux spec model
@@ -106,10 +106,10 @@ duckflux-editor/
 │   │   └── useDebounce.ts         # Generic debounce hook
 │   │
 │   ├── examples/
-│   │   ├── minimal.flow.yaml      # Raw YAML strings embedded as TS constants
-│   │   ├── loop.flow.yaml
-│   │   ├── parallel.flow.yaml
-│   │   ├── code-review.flow.yaml
+│   │   ├── minimal.duck.yaml      # Raw YAML strings embedded as TS constants
+│   │   ├── loop.duck.yaml
+│   │   ├── parallel.duck.yaml
+│   │   ├── code-review.duck.yaml
 │   │   └── index.ts               # Exports all examples with labels
 │   │
 │   └── styles/
@@ -132,7 +132,7 @@ duckflux-editor/
 - [ ] Install all dependencies listed in the Dependencies table above.
 - [ ] Configure Tailwind CSS 4 (PostCSS plugin setup).
 - [ ] Create the directory structure from the Project Structure section above (empty files with placeholder exports).
-- [ ] Copy `duckflux.schema.json` (v0.3) into `src/schema/`.
+- [ ] Copy `duckflux.schema.json` (v0.7) into `src/schema/`.
 - [ ] Set up a basic `App.tsx` that renders two placeholder panels side by side (50/50 horizontal split).
 - [ ] Confirm `npm run dev` starts the dev server and renders the placeholder layout.
 
@@ -147,7 +147,7 @@ duckflux-editor/
 
 ### File: `src/types/workflow.ts`
 
-Define TypeScript interfaces that mirror the duckflux spec v0.3 model. These types are used by the parser, validator, and Mermaid generator. They do NOT need custom YAML unmarshaling (that's the parser's job) — they are plain TS interfaces.
+Define TypeScript interfaces that mirror the duckflux spec v0.7 model. These types are used by the parser, validator, and Mermaid generator. They do NOT need custom YAML unmarshaling (that's the parser's job) — they are plain TS interfaces.
 
 ### Tasks
 
@@ -276,7 +276,7 @@ Define TypeScript interfaces that mirror the duckflux spec v0.3 model. These typ
 ### Exit Criteria
 
 - All types compile with `tsc --noEmit`.
-- Types cover every construct in the duckflux v0.3 schema.
+- Types cover every construct in the duckflux v0.7 schema.
 
 ---
 
@@ -322,7 +322,7 @@ Parse a raw YAML string into the `Workflow` type. Use the `yaml` library (Eemeli
 
 ### Exit Criteria
 
-- Parser correctly transforms all duckflux v0.3 constructs into TypeScript types.
+- Parser correctly transforms all duckflux v0.7 constructs into TypeScript types.
 - Parse errors include accurate line numbers.
 
 ---
@@ -509,7 +509,7 @@ Convert a parsed `Workflow` into a Mermaid flowchart string. Nodes are minimal (
 
 ### Exit Criteria
 
-- Generator produces valid Mermaid syntax for all duckflux v0.3 constructs.
+- Generator produces valid Mermaid syntax for all duckflux v0.7 constructs.
 - Every node has a click callback and corresponding metadata entry.
 
 ---
@@ -558,7 +558,7 @@ The right panel: Monaco editor configured for YAML with live linting.
   - [ ] Note: Monaco does not natively support YAML schema validation out of the box. The `monaco-yaml` package (from `remcohaszing/monaco-yaml`) adds YAML language support with JSON Schema-based autocompletion. Install `monaco-yaml` and configure it with the duckflux schema for autocompletion.
   - [ ] If `monaco-yaml` integration proves complex, defer autocompletion to a later phase and rely solely on the custom linting (ajv + semantic) for error reporting.
 
-- [ ] **Initial content:** Load a default example workflow (e.g., `minimal.flow.yaml`) on first render.
+- [ ] **Initial content:** Load a default example workflow (e.g., `minimal.duck.yaml`) on first render.
 
 - [ ] **Expose editor content** via the `useWorkflow` hook (Phase 7) so other components can access the current YAML string and parsed state.
 
@@ -735,7 +735,7 @@ Modal/popover that shows full details for a clicked diagram node.
 
 - [ ] **Toolbar (top bar):**
   - [ ] **Load file button:** Opens a native file picker (`<input type="file" accept=".yaml,.yml">`). Reads the file content and sets it in the editor.
-  - [ ] **Save/download button:** Downloads the current YAML content as a `.flow.yaml` file using a Blob URL.
+  - [ ] **Save/download button:** Downloads the current YAML content as a `.duck.yaml` file using a Blob URL.
   - [ ] **Examples dropdown:** A `<select>` or dropdown menu listing built-in example workflows (from `src/examples/`). Selecting one replaces the editor content with the example YAML.
   - [ ] **New button:** Clears the editor and loads a minimal template:
     ```yaml
@@ -743,7 +743,7 @@ Modal/popover that shows full details for a clicked diagram node.
       - type: exec
         run: echo "hello"
     ```
-  - [ ] **Schema version label:** Static text showing "duckflux v0.3" (from the schema `$id`).
+  - [ ] **Schema version label:** Static text showing "duckflux v0.7" (from the schema `$id`).
 
 - [ ] **Status bar (bottom bar):**
   - [ ] Error count: "✓ Valid" (green) or "✗ N errors" (red) based on diagnostics.
@@ -796,13 +796,13 @@ Modal/popover that shows full details for a clicked diagram node.
 
 ## Phase 11 — Example Workflows
 
-### Files: `src/examples/*.flow.yaml` and `src/examples/index.ts`
+### Files: `src/examples/*.duck.yaml` and `src/examples/index.ts`
 
 ### Tasks
 
 - [ ] Embed the following example workflows as string constants in TypeScript files:
 
-  - [ ] **minimal.flow.yaml** — Single exec step. Tests basic rendering.
+  - [ ] **minimal.duck.yaml** — Single exec step. Tests basic rendering.
     ```yaml
     id: minimal
     name: Minimal Workflow
@@ -817,7 +817,7 @@ Modal/popover that shows full details for a clicked diagram node.
       - greet
     ```
 
-  - [ ] **loop.flow.yaml** — Loop with `until` and `max`. Tests subgraph rendering.
+  - [ ] **loop.duck.yaml** — Loop with `until` and `max`. Tests subgraph rendering.
     ```yaml
     id: loop-example
     name: Loop Workflow
@@ -837,7 +837,7 @@ Modal/popover that shows full details for a clicked diagram node.
             - counter
     ```
 
-  - [ ] **parallel.flow.yaml** — Three parallel branches with a follow-up step. Tests fork/join.
+  - [ ] **parallel.duck.yaml** — Three parallel branches with a follow-up step. Tests fork/join.
     ```yaml
     id: parallel-example
     name: Parallel Workflow
@@ -865,7 +865,7 @@ Modal/popover that shows full details for a clicked diagram node.
       - report
     ```
 
-  - [ ] **conditional.flow.yaml** — If/then/else with a when guard. Tests diamond branching.
+  - [ ] **conditional.duck.yaml** — If/then/else with a when guard. Tests diamond branching.
     ```yaml
     id: conditional-example
     name: Conditional Workflow
@@ -893,7 +893,7 @@ Modal/popover that shows full details for a clicked diagram node.
             - notify
     ```
 
-  - [ ] **full-pipeline.flow.yaml** — Comprehensive example combining loop, parallel, if, wait, emit, inline participants, error handling, retry, and output mapping. Tests all constructs together.
+  - [ ] **full-pipeline.duck.yaml** — Comprehensive example combining loop, parallel, if, wait, emit, inline participants, error handling, retry, and output mapping. Tests all constructs together.
     ```yaml
     id: code-review
     name: Code Review Pipeline
@@ -996,7 +996,7 @@ Modal/popover that shows full details for a clicked diagram node.
   - [ ] Introduce a typo in YAML → red squiggly appears after 1 second
   - [ ] Reference non-existent participant → semantic error appears
   - [ ] Empty `flow: []` → error appears
-  - [ ] Load external `.flow.yaml` file → works
+  - [ ] Load external `.duck.yaml` file → works
   - [ ] Download → file saves correctly
   - [ ] Resize panels → smooth
   - [ ] Zoom/pan diagram → works
