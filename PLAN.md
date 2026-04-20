@@ -1,6 +1,6 @@
 # duckflux Editor — Implementation Plan
 
-Target repo: `duckflux/editor`
+Target repo: `deepducks/editor`
 Stack: React + TypeScript + Monaco Editor + Mermaid.js
 Architecture: Split-view web app — YAML editor (right) + Mermaid diagram (left) with click-to-inspect modals.
 
